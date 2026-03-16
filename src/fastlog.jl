@@ -1,3 +1,7 @@
+# Core log algorithm (polynomial coefficients, ln2 splitting, and reconstruction)
+# adapted from fdlibm's e_log.c / e_logf.c (Sun Microsystems, 1993).
+# See: https://github.com/JuliaMath/openlibm/blob/v0.8.7/src/e_log.c
+
 const _SQRT_HALF_I32 = reinterpret(Int32, Float32(sqrt(0.5)))
 
 const _LOG_ODD_F32  = (reinterpret(Float32, Int32(0x3f2aaaaa)), reinterpret(Float32, Int32(0x3e91e9ee)))
