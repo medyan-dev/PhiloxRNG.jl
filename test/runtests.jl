@@ -4,6 +4,9 @@ using PhiloxRNG
 using Statistics
 using HypothesisTests
 using Distributions
+using Aqua: Aqua
+
+Aqua.test_all(PhiloxRNG)
 
 include("test-philox.jl")
 include("test-distributions.jl")
