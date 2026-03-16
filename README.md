@@ -2,11 +2,13 @@
 
 [![Build Status](https://github.com/medyan-dev/PhiloxRNG.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/medyan-dev/PhiloxRNG.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
-A Julia package for the Philox4x32 counter-based RNG. The same (counter, key) pair always produces the same output, making it naturally parallel and ideal for GPU kernels.
+Stateless random number generation for parallel and GPU workloads. Zero dependencies.
 
-While the raw integer outputs of `philox4x32_10` will be identical on all devices, floating point outputs may give slightly different results.
+PhiloxRNG.jl implements the [Philox4x32](https://doi.org/10.1145/2063384.2063405) counter-based RNG as pure, inlineable functions with no global state. Each call maps a `(counter, key)` pair directly to random output — making it trivially parallel across threads, tasks, or GPU lanes. Includes built-in uniform and normal distributions.
 
-Ported from the C++ [Random123](https://github.com/DEShawResearch/random123) library. See also [Random123.jl](https://github.com/JuliaRandom/Random123.jl).
+While the raw integer outputs of `philox4x32_10` are identical on all devices, floating-point distribution outputs may differ slightly due to fast-math approximations.
+
+Ported from the C++ [Random123](https://github.com/DEShawResearch/random123) library.
 
 ## Installation
 
@@ -17,10 +19,10 @@ Pkg.add("PhiloxRNG")
 
 ## Basic usage
 
-The random number functions take three `UInt64` arguments: `ctr0`, `ctr1`, and `key`.
+Every function takes three `UInt64` arguments: `(ctr0, ctr1, key)`.
 
-- **`ctr0`, `ctr1`** — together form a 128-bit counter. Any unique (ctr0, ctr1) pair gives a unique raw RNG output.
-- **`key`** — acts as a seed. Different keys give independent streams.
+- **`ctr0`, `ctr1`** — a 128-bit counter. Each unique `(ctr0, ctr1)` pair produces independent output.
+- **`key`** — a seed. Different keys give independent streams.
 
 ```julia
 using PhiloxRNG
@@ -81,9 +83,11 @@ Julia 1.12.5, AMD Ryzen 7 9800X3D, NVIDIA GeForce RTX 3080.
 
 See `benchmarks/` for the full benchmark scripts.
 
-## Related packages
+## When to use PhiloxRNG.jl vs Random123.jl
 
-- [Random123.jl](https://github.com/JuliaRandom/Random123.jl) — Julia implementation of the Random123 family of counter-based RNGs (Philox, Threefry, ARS, AESNI) with an `AbstractRNG` interface.
+- **[Random123.jl](https://github.com/JuliaRandom/Random123.jl)** provides an `AbstractRNG` interface for multiple counter-based RNG families (Philox, Threefry, ARS, AESNI). Use it when you need a drop-in replacement for Julia's standard `rand(rng, ...)` API.
+
+- **PhiloxRNG.jl** exposes bare functions with no `AbstractRNG` wrapper, no dependencies, and built-in fast distributions. Use it in GPU kernels or hot loops where the function-call interface is a better fit than a mutable RNG object.
 
 ## References
 
