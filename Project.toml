@@ -1,0 +1,10 @@
+name = "PhiloxRNG"
+uuid = "508b8dab-2d72-462c-b792-eb7ae329b456"
+version = "0.1.0-DEV"
+authors = ["Nathan Zimmerberg <nzimmerberg@gmail.com>", "Patrick Kelly <ptfk1677@umd.edu>"]
+
+[workspace]
+projects = ["test", "benchmarks"]
+
+[compat]
+julia = "1.10"

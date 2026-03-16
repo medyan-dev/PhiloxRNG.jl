@@ -1,0 +1,5 @@
+Manifest.toml
+.vscode
+.mcp.json
+agent-logs/
+agent-depot/
