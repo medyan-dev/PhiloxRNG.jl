@@ -69,10 +69,10 @@ Julia 1.12.5, AMD Ryzen 7 9800X3D, NVIDIA GeForce RTX 3080.
 
 | Function | PhiloxRNG | Random stdlib |
 |---|---|---|
-| `rand` F32 | 0.791 | 0.522 |
-| `rand` F64 | 1.997 | 1.052 |
-| `randn` F32 | 1.009 | 2.114 |
-| `randn` F64 | 3.098 | 1.795 |
+| `rand` F32 | 0.679 | 0.528 |
+| `rand` F64 | 1.371 | 1.074 |
+| `randn` F32 | 0.898 | 2.103 |
+| `randn` F64 | 2.009 | 1.801 |
 
 ### GPU (ns/value, N = 100,000,000)
 

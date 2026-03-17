@@ -5,8 +5,6 @@ const PHILOX_M4x32_1 = 0xCD9E8D57
 const PHILOX_W32_0 = 0x9E3779B9
 const PHILOX_W32_1 = 0xBB67AE85
 
-const PHILOX4x32_DEFAULT_ROUNDS = 10
-
 @inline function _philox4x32round(ctr::NTuple{4, UInt32}, key::NTuple{2, UInt32})::NTuple{4, UInt32}
     mul0 = widemul(PHILOX_M4x32_0, ctr[1])
     mul1 = widemul(PHILOX_M4x32_1, ctr[3])
@@ -31,10 +29,38 @@ Ported from [Random123 philox.h](https://github.com/DEShawResearch/random123/blo
 """
 @inline function philox4x32_10(ctr::NTuple{4, UInt32}, key::NTuple{2, UInt32})::NTuple{4, UInt32}
     ctr = _philox4x32round(ctr, key)
-    for i in 1:PHILOX4x32_DEFAULT_ROUNDS-1
-        key = _philox4x32bumpkey(key)
-        ctr = _philox4x32round(ctr, key)
-    end
+    # Unrolled this loop to improve effects
+    # for i in 1:9
+    #     key = _philox4x32bumpkey(key)
+    #     ctr = _philox4x32round(ctr, key)
+    # end
+    # 1
+    key = _philox4x32bumpkey(key)
+    ctr = _philox4x32round(ctr, key)
+    # 2
+    key = _philox4x32bumpkey(key)
+    ctr = _philox4x32round(ctr, key)
+    # 3
+    key = _philox4x32bumpkey(key)
+    ctr = _philox4x32round(ctr, key)
+    # 4
+    key = _philox4x32bumpkey(key)
+    ctr = _philox4x32round(ctr, key)
+    # 5
+    key = _philox4x32bumpkey(key)
+    ctr = _philox4x32round(ctr, key)
+    # 6
+    key = _philox4x32bumpkey(key)
+    ctr = _philox4x32round(ctr, key)
+    # 7
+    key = _philox4x32bumpkey(key)
+    ctr = _philox4x32round(ctr, key)
+    # 8
+    key = _philox4x32bumpkey(key)
+    ctr = _philox4x32round(ctr, key)
+    # 9
+    key = _philox4x32bumpkey(key)
+    ctr = _philox4x32round(ctr, key)
     ctr
 end
 

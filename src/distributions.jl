@@ -94,7 +94,7 @@ floats of type `F` using the Box-Muller method with fast polynomial approximatio
 of log and sincospi.
 """
 @inline function boxmuller(::Type{F}, u1::T, u2::T)::NTuple{2, F} where {F, T <: Union{UInt32, UInt64}}
-    r = Base.FastMath.sqrt_fast(-2 * _fast_log(u2))
+    r = Base.sqrt_llvm(-2 * _fast_log(u2))
     s, c = _fast_sincospi(u1)
     (F(r * s), F(r * c))
 end
