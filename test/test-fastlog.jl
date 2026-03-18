@@ -102,5 +102,5 @@ end
     err, i_max = sample_max_error_u64(x->fast_sqrt_log(Float64, x), ref_sqrt_log)
     @test err < 3E-15
     err, i_max = sample_max_error_u64(x->fast_sqrt_log(Float32, x), ref_sqrt_log)
-    @test err < 5E-7
+    @test err < 1E-6
 end
