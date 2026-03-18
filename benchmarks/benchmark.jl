@@ -12,10 +12,10 @@ using Statistics
 
 # Fill a vector with randn using Philox counter-based RNG
 
-function philox_randn!(out::Vector{Float32}, ctr1::UInt64=UInt64(12345), key::UInt64=rand(UInt64))
+function philox_randn!(out::Vector{Float32}; ctr1::UInt64=UInt64(12345), key::UInt64=rand(UInt64))
     l = length(out)
     n = l ÷ 4
-    @inbounds @simd ivdep for i in 1:n
+    @inbounds for i in 1:n
         a, b, c, d = randn_f32(UInt64(i), ctr1, key)
         out[4*i - 3] = a
         out[4*i - 2] = b
@@ -34,10 +34,10 @@ function philox_randn!(out::Vector{Float32}, ctr1::UInt64=UInt64(12345), key::UI
     out
 end
 
-function philox_randu01!(out::Vector{Float32}, ctr1::UInt64=UInt64(12345), key::UInt64=rand(UInt64))
+function philox_randu01!(out::Vector{Float32}; ctr1::UInt64=UInt64(12345), key::UInt64=rand(UInt64))
     l = length(out)
     n = l ÷ 4
-    @inbounds @simd ivdep for i in 1:n
+    @inbounds for i in 1:n
         a, b, c, d = randu01_f32(UInt64(i), ctr1, key)
         out[4*i - 3] = a
         out[4*i - 2] = b
@@ -56,10 +56,10 @@ function philox_randu01!(out::Vector{Float32}, ctr1::UInt64=UInt64(12345), key::
     out
 end
 
-function philox_randn!(out::Vector{Float64}, ctr1::UInt64=UInt64(12345), key::UInt64=rand(UInt64))
+function philox_randn!(out::Vector{Float64}; ctr1::UInt64=UInt64(12345), key::UInt64=rand(UInt64))
     l = length(out)
     n = l ÷ 2
-    @inbounds @simd ivdep for i in 1:n
+    @inbounds for i in 1:n
         a, b = randn_f64(UInt64(i), ctr1, key)
         out[2*i - 1] = a
         out[2*i]     = b
@@ -72,10 +72,10 @@ function philox_randn!(out::Vector{Float64}, ctr1::UInt64=UInt64(12345), key::UI
     out
 end
 
-function philox_randu01!(out::Vector{Float64}, ctr1::UInt64=UInt64(12345), key::UInt64=rand(UInt64))
+function philox_randu01!(out::Vector{Float64}; ctr1::UInt64=UInt64(12345), key::UInt64=rand(UInt64))
     l = length(out)
     n = l ÷ 2
-    @inbounds @simd ivdep for i in 1:n
+    @inbounds for i in 1:n
         a, b = randu01_f64(UInt64(i), ctr1, key)
         out[2*i - 1] = a
         out[2*i]     = b
