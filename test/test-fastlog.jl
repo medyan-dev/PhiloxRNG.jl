@@ -24,13 +24,13 @@ function mean_u32(a)
     r*Float64x2(2)^-32
 end
 
-function fast_sqrt_log(u)
-    Base.FastMath.sqrt_fast(-2*PhiloxRNG._fast_log(u))
+function fast_sqrt_log(::Type{F}, u) where F
+    Base.sqrt_llvm(-2*PhiloxRNG._fast_log(F, u))
 end
 
 function ref_sqrt_log(u::UInt32)
     x = Float64(u)*Float64(2)^(-32) + Float64(2)^(-33)
-    Float32(sqrt(-2 * log(x)))
+    sqrt(-2 * log(x))
 end
 
 function ref_sqrt_log(u::UInt64)
@@ -41,7 +41,7 @@ function ref_sqrt_log(u::UInt64)
         x = fma(Float64(~u), Float64(2)^(-64), Float64(2)^(-65))
         log1p(-x)
     end
-    Float64(sqrt(-Float64(2) * g))
+    sqrt(-2 * g)
 end
 
 function sample_max_error_u64(a,b)
@@ -88,15 +88,19 @@ end
 
 @testset "_fast_log" begin
     # Exhaustive Float32 error
-    err, i_max = max_error_u32(fast_sqrt_log, ref_sqrt_log)
+    err, i_max = max_error_u32(x->fast_sqrt_log(Float32, x), ref_sqrt_log)
     @test err < 5E-7
+    err, i_max = max_error_u32(x->fast_sqrt_log(Float64, x), ref_sqrt_log)
+    @test err < 3E-15
     # Ensure accurate msd
-    msd = mean_u32(PhiloxRNG._fast_log)
+    msd = mean_u32(x->PhiloxRNG._fast_log(Float32, x))
     @test abs(msd + 1) < 1E-9
     # Edge cases
-    @test PhiloxRNG._fast_log(typemax(UInt32)) < 0
-    @test PhiloxRNG._fast_log(typemin(UInt32)) > -Inf
-    # Sample Float64 error
-    err, i_max = sample_max_error_u64(fast_sqrt_log, ref_sqrt_log)
+    @test PhiloxRNG._fast_log(Float32, typemax(UInt32)) < 0
+    @test PhiloxRNG._fast_log(Float32, typemin(UInt32)) > -Inf
+    # Sample UInt32 error
+    err, i_max = sample_max_error_u64(x->fast_sqrt_log(Float64, x), ref_sqrt_log)
     @test err < 3E-15
+    err, i_max = sample_max_error_u64(x->fast_sqrt_log(Float32, x), ref_sqrt_log)
+    @test err < 1E-6
 end

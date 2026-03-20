@@ -38,16 +38,16 @@ end
 
 # --- Core sincospi: octant bits → swap/negate ---
 
-@inline function _fast_sincospi(u::UInt32)
+@inline function _fast_sincospi(::Type{Float32}, u::Union{UInt32, UInt64})
     oct = (u % Int32) & Int32(7)
-    y = fma(Float32(u & ~UInt32(7)), Float32(2)^(-34), Float32(2)^(-32))
+    y = fma(Float32(u & ~oftype(u, 7)), Float32(2)^(-(sizeof(u)*8+2)), Float32(2)^(-(sizeof(u)*8)))
 
     sp = _sinpoly(y)
     cp = _cospoly(y)
 
-    swap    = (oct & Int32(1)) != Int32(0)
-    sin_neg = (oct & Int32(2)) != Int32(0)
-    cos_neg = (oct & Int32(4)) != Int32(0)
+    swap    = !iszero(oct & Int32(1))
+    sin_neg = !iszero(oct & Int32(2))
+    cos_neg = !iszero(oct & Int32(4))
 
     s_raw = ifelse(swap, cp, sp)
     c_raw = ifelse(swap, sp, cp)
@@ -82,16 +82,16 @@ end
     evalpoly(y * y, _CP64)
 end
 
-@inline function _fast_sincospi(u::UInt64)
-    oct = (u % Int64) & Int64(7)
-    y = fma(Float64(u & ~UInt64(7)), Float64(2)^(-66), Float64(2)^(-64))
+@inline function _fast_sincospi(::Type{Float64}, u::Union{UInt32, UInt64})
+    oct = (u % Int32) & Int32(7)
+    y = fma(Float64(u & ~oftype(u, 7)), Float64(2)^(-(sizeof(u)*8+2)), Float64(2)^(-(sizeof(u)*8)))
 
     sp = _sinpoly(y)
     cp = _cospoly(y)
 
-    swap    = (oct & Int64(1)) != Int64(0)
-    sin_neg = (oct & Int64(2)) != Int64(0)
-    cos_neg = (oct & Int64(4)) != Int64(0)
+    swap    = !iszero(oct & Int32(1))
+    sin_neg = !iszero(oct & Int32(2))
+    cos_neg = !iszero(oct & Int32(4))
 
     s_raw = ifelse(swap, cp, sp)
     c_raw = ifelse(swap, sp, cp)
