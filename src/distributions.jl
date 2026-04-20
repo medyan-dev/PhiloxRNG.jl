@@ -6,11 +6,11 @@ Convert an unsigned integer to a float of type `F` uniformly distributed in (0, 
 Ported from [Random123 uniform.hpp](https://github.com/DEShawResearch/random123/blob/v1.14.0/include/Random123/uniform.hpp#L175).
 """
 @inline function u01(::Type{F}, u::UInt32)::F where F
-    fma(F(u), F(2)^(-32), F(2)^(-33))
+    fma(F(u), F(2)^Int32(-32), F(2)^Int32(-33))
 end
 
 @inline function u01(::Type{F}, u::UInt64)::F where F
-    fma(F(u), F(2)^(-64), F(2)^(-65))
+    fma(F(u), F(2)^Int32(-64), F(2)^Int32(-65))
 end
 
 """
@@ -50,11 +50,11 @@ Convert an unsigned integer to a float of type `F` uniformly distributed in [-1,
 Ported from [Random123 uniform.hpp](https://github.com/DEShawResearch/random123/blob/v1.14.0/include/Random123/uniform.hpp#L206).
 """
 @inline function uneg11(::Type{F}, u::UInt32)::F where F
-    fma(F(u%Int32), F(2)^(-31), F(2)^(-32))
+    fma(F(u%Int32), F(2)^Int32(-31), F(2)^Int32(-32))
 end
 
 @inline function uneg11(::Type{F}, u::UInt64)::F where F
-    fma(F(u%Int64), F(2)^(-63), F(2)^(-64))
+    fma(F(u%Int64), F(2)^Int32(-63), F(2)^Int32(-64))
 end
 
 """
@@ -94,7 +94,7 @@ floats of type `F` using the Box-Muller method with fast polynomial approximatio
 of log and sincospi.
 """
 @inline function boxmuller(::Type{F}, u1::T, u2::T)::NTuple{2, F} where {F, T <: Union{UInt32, UInt64}}
-    r = Base.sqrt_llvm(-2 * _fast_log(F, u2))
+    r = Base.sqrt_llvm(F(-2) * _fast_log(F, u2))
     s, c = _fast_sincospi(F, u1)
     (r * s, r * c)
 end
