@@ -3,9 +3,9 @@
 # See: https://github.com/JuliaMath/openlibm/blob/v0.8.7/src/e_log.c
 
 const _SQRT_HALF_I32 = reinterpret(Int32, Float32(sqrt(0.5)))
-
-const _LOG_ODD_F32  = (0.6666666f0, 0.28498787f0)
-const _LOG_EVEN_F32 = (0.40000972f0, 0.24279079f0)
+const _LOG_POLY_F32 = (0.6666666f0, 0.40000972f0, 0.28498787f0, 0.24279079f0)
+const _LN2_HI_F32 = 0.6931381f0
+const _LN2_LO_F32 = 9.058001f-6
 
 @inline function _fast_log(::Type{Float32}, u::Union{UInt32, UInt64})
     x = u01(Float32, u)
@@ -18,20 +18,31 @@ const _LOG_EVEN_F32 = (0.40000972f0, 0.24279079f0)
     f = ifelse(k == Int32(0), f_comp, f_std)
 
     s = f / (2.0f0 + f)
-    z = s * s; w = z * z
-    R = z * evalpoly(w, _LOG_ODD_F32) + w * evalpoly(w, _LOG_EVEN_F32)
-
+    z = s * s
+    R = z * evalpoly(z, _LOG_POLY_F32)
     hfsq = 0.5f0 * f * f
 
-    Float32(k) * 0.6931381f0 -
-        ((hfsq - (s * (hfsq + R) +
-          Float32(k) * 9.058001f-6)) - f)
+    # log(x) = k*ln2 + log(1+f)
+    k_f32 = Float32(k)
+    # Simpler version, but fails the mean test by 2E-9
+    # fma(k_f32, 0.6931472f0 #= log(2) =#, fma(s, R-f, f))
+    fma(k_f32, _LN2_HI_F32,
+        f - (hfsq - fma(s, (hfsq + R), k_f32 * _LN2_LO_F32))
+    )
 end
 
 const _SQRT_HALF_I64 = reinterpret(Int64, sqrt(0.5))
-
-const _LOG_ODD_F64  = (6.666666666666735130e-01, 2.857142874366239149e-01, 1.818357216161805012e-01, 1.479819860511658591e-01)
-const _LOG_EVEN_F64 = (3.999999999940941908e-01, 2.222219843214978396e-01, 1.531383769920937332e-01)
+const _LOG_POLY_F64 = (
+    6.666666666666735130e-01,
+    3.999999999940941908e-01,
+    2.857142874366239149e-01,
+    2.222219843214978396e-01,
+    1.818357216161805012e-01,
+    1.531383769920937332e-01,
+    1.479819860511658591e-01,
+)
+const _LN2_HI_F64 = 6.93147180369123816490e-01
+const _LN2_LO_F64 = 1.90821492927058770002e-10
 
 @inline function _fast_log(::Type{Float64}, u::Union{UInt32, UInt64})
     x = u01(Float64, u)
@@ -44,10 +55,13 @@ const _LOG_EVEN_F64 = (3.999999999940941908e-01, 2.222219843214978396e-01, 1.531
     f = ifelse(k == Int64(0), f_comp, f_std)
 
     s = f / (2.0 + f)
-    z = s * s; w = z * z
-    R = z * evalpoly(w, _LOG_ODD_F64) + w * evalpoly(w, _LOG_EVEN_F64)
+    z = s * s
+    R = z * evalpoly(z, _LOG_POLY_F64)
     hfsq = 0.5 * f * f
 
-    Float64(k) * 6.93147180369123816490e-01 -
-        ((hfsq - (s * (hfsq + R) + Float64(k) * 1.90821492927058500170e-10)) - f)
+    # log(x) = k*ln2 + log(1+f)
+    k_f64 = Float64(k)
+    fma(k_f64, _LN2_HI_F64,
+        f - (hfsq - fma(s, (hfsq + R), k_f64 * _LN2_LO_F64))
+    )
 end
