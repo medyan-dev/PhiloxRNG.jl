@@ -40,7 +40,7 @@ end
 
 @inline function _fast_sincospi(::Type{Float32}, u::Union{UInt32, UInt64})
     oct = (u % Int32) & Int32(7)
-    y = fma(Float32(u & ~oftype(u, 7)), Float32(2)^(-(sizeof(u)*8+2)), Float32(2)^(-(sizeof(u)*8)))
+    y = fma(Float32(u & ~oftype(u, 7)), Float32(2)^Int32(-(sizeof(u)*8+2)), Float32(2)^Int32(-(sizeof(u)*8)))
 
     sp = _sinpoly(y)
     cp = _cospoly(y)
@@ -84,7 +84,7 @@ end
 
 @inline function _fast_sincospi(::Type{Float64}, u::Union{UInt32, UInt64})
     oct = (u % Int32) & Int32(7)
-    y = fma(Float64(u & ~oftype(u, 7)), Float64(2)^(-(sizeof(u)*8+2)), Float64(2)^(-(sizeof(u)*8)))
+    y = fma(Float64(u & ~oftype(u, 7)), Float64(2)^Int32(-(sizeof(u)*8+2)), Float64(2)^Int32(-(sizeof(u)*8)))
 
     sp = _sinpoly(y)
     cp = _cospoly(y)

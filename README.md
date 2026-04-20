@@ -63,23 +63,43 @@ Lower-level `public` helpers (access via `PhiloxRNG.u01`, etc.):
 
 ## Benchmarks
 
-Julia 1.12.5, AMD Ryzen 7 9800X3D, NVIDIA GeForce RTX 3080.
+All benchmarks use Julia 1.12.6, single thread on CPU.
 
-### CPU (ns/value, N = 100,000,000)
+### CPU — AMD Ryzen 7 9800X3D (ns/value, N = 100,000,000)
 
 | Function | PhiloxRNG | Random stdlib |
 |---|---|---|
-| `rand` F32 | 0.679 | 0.528 |
-| `rand` F64 | 1.371 | 1.074 |
-| `randn` F32 | 0.898 | 2.103 |
-| `randn` F64 | 2.009 | 1.801 |
+| `rand` F32 | 0.693 | 0.538 |
+| `randn` F32 | 0.919 | 2.132 |
+| `rand` F64 | 1.420 | 1.080 |
+| `randn` F64 | 2.059 | 1.803 |
 
-### GPU (ns/value, N = 100,000,000)
+### CPU — AMD EPYC 7763 (ns/value, N = 100,000,000)
+
+| Function | PhiloxRNG | Random stdlib |
+|---|---|---|
+| `rand` F32 | 1.100 | 0.480 |
+| `randn` F32 | 1.906 | 3.842 |
+| `rand` F64 | 2.529 | 1.467 |
+| `randn` F64 | 4.917 | 2.358 |
+
+### GPU — NVIDIA GeForce RTX 3080 (ns/value, N = 100,000,000)
 
 | Function | PhiloxRNG | CUDA.jl |
 |---|---|---|
-| `rand` F32 | 0.006 | 0.006 |
-| `randn` F32 | 0.007 | 0.032 |
+| `rand` F32 | 0.0056 | 0.0056 |
+| `randn` F32 | 0.0058 | 0.0318 |
+| `rand` F64 | 0.0111 | 0.0195 |
+| `randn` F64 | 0.1332 | 0.2743 |
+
+### GPU — NVIDIA A100-SXM4-40GB (ns/value, N = 100,000,000)
+
+| Function | PhiloxRNG | CUDA.jl |
+|---|---|---|
+| `rand` F32 | 0.0028 | 0.0064 |
+| `randn` F32 | 0.0049 | 0.0359 |
+| `rand` F64 | 0.0053 | 0.0163 |
+| `randn` F64 | 0.0096 | 0.0762 |
 
 See `benchmarks/` for the full benchmark scripts.
 
