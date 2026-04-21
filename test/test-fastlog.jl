@@ -15,6 +15,20 @@ function max_error_u32(a,b)
     err, i_max
 end
 
+function max_rel_error_u32(a,b)
+    err::Float64 = 0.0
+    i_max::UInt32 = 0
+    for i in UInt32(0):typemax(UInt32)
+        x = a(i)
+        y = b(i)
+        d = abs(x - y)/max(abs(x), abs(y))
+        d < err && continue
+        err = d
+        i_max = i
+    end
+    err, i_max
+end
+
 # Return the mean value over u32
 function mean_u32(a)
     r::Float64x2 = 0.0
@@ -90,6 +104,8 @@ end
     # Exhaustive Float32 error
     err, i_max = max_error_u32(x->fast_sqrt_log(Float32, x), ref_sqrt_log)
     @test err < 5E-7
+    err, i_max = max_rel_error_u32(x->fast_sqrt_log(Float32, x), ref_sqrt_log)
+    @test err < 1.5*eps(Float32)
     err, i_max = max_error_u32(x->fast_sqrt_log(Float64, x), ref_sqrt_log)
     @test err < 3E-15
     # Ensure accurate msd
