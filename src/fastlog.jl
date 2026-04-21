@@ -11,7 +11,7 @@ const _LN2_LO_F32 = 9.058001f-6
 @inline function _fast_log(::Type{Float32}, u::Union{UInt32, UInt64})
     x = u01(Float32, u)
 
-    # Goal find k and f such that
+    # Goal: find k and f such that
     # x = 2^k * (1+f)
     # where sqrt(2)/2 ≤ (1+f) < sqrt(2)
     # if k is zero
@@ -19,7 +19,7 @@ const _LN2_LO_F32 = 9.058001f-6
 
     # Float32 has 23 fractional bits.
     # x is ordered by value in Int32 space.
-    # So k starts at 0, then ix becomes negative at x = prevfloat(sqrt(0.5f0))
+    # Starting from x=1, k starts at 0, then ix becomes negative at x = prevfloat(sqrt(0.5f0))
     # making k = -1. For each power of 2 scale in x,
     # k changes by one, because we shift out the 23 fraction bits.
     ix = reinterpret(Int32, x) - _SQRT_HALF_I32
@@ -40,11 +40,11 @@ const _LN2_LO_F32 = 9.058001f-6
     f_comp = -u01(Float32, ~u)
     f = ifelse(k == Int32(0), f_comp, f_std)
 
-    # Goal get log(1+f) via a polynomial approx.
-    # s = f / (2 + f)
-    # log(1+f) = 2s + s^3*log_poly(s^2)
-    # R = s^2*log_poly(s^2)
-    # log(1+f) = f - f^2/2 + s(f^2/2 + R)
+    # Goal: get log(1+f) via a polynomial approx.
+    # Let s = f/(2+f), z = s², and log_poly(z) ≈ evalpoly(z, _LOG_POLY_F32)
+    # log(1+f) = 2s + s³*log_poly(s²)
+    # R = s²*log_poly(s²)
+    # log(1+f) = f - f²/2 + s*(f²/2 + R)
     s = f / (2.0f0 + f)
     z = s * s
     R = z * evalpoly(z, _LOG_POLY_F32)
