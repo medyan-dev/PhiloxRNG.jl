@@ -103,24 +103,24 @@ function ref_sincospi(u::UInt64)
     (sin_val, cos_val)
 end
 
-@testset "_fast_sincospi" begin
+@testset "fast_sincospi" begin
     # Exhaustive UInt32 error
-    err, i_max = max_error_u32_2(x->PhiloxRNG._fast_sincospi(Float32, x), ref_sincospi)
+    err, i_max = max_error_u32_2(x->PhiloxRNG.fast_sincospi(Float32, x), ref_sincospi)
     @test err < 2E-7
-    err, i_max = max_error_u32_2(x->PhiloxRNG._fast_sincospi(Float64, x), ref_sincospi)
+    err, i_max = max_error_u32_2(x->PhiloxRNG.fast_sincospi(Float64, x), ref_sincospi)
     @test err < 4E-16
     # Ensure accurate mean
-    m = mean_u32_2(x->PhiloxRNG._fast_sincospi(Float32, x))
+    m = mean_u32_2(x->PhiloxRNG.fast_sincospi(Float32, x))
     @test abs(m[1]) < 1E-9
     @test abs(m[2]) < 1E-9
     # Edge cases
-    @test PhiloxRNG._fast_sincospi(Float32, typemin(UInt32)) === (Float32(2*pi*2^-33), 1.0f0)
-    @test PhiloxRNG._fast_sincospi(Float64, typemin(UInt32)) === (Float64(2*pi*2^-33), 1.0)
-    @test PhiloxRNG._fast_sincospi(Float32, typemin(UInt64)) === (Float32(2*pi*2^-65), 1.0f0)
-    @test PhiloxRNG._fast_sincospi(Float64, typemin(UInt64)) === (Float64(2*pi*2^-65), 1.0)
+    @test PhiloxRNG.fast_sincospi(Float32, typemin(UInt32)) === (Float32(2*pi*2^-33), 1.0f0)
+    @test PhiloxRNG.fast_sincospi(Float64, typemin(UInt32)) === (Float64(2*pi*2^-33), 1.0)
+    @test PhiloxRNG.fast_sincospi(Float32, typemin(UInt64)) === (Float32(2*pi*2^-65), 1.0f0)
+    @test PhiloxRNG.fast_sincospi(Float64, typemin(UInt64)) === (Float64(2*pi*2^-65), 1.0)
     # Sample UInt64 error
-    err, i_max = sample_max_error_u64_2(x->PhiloxRNG._fast_sincospi(Float64, x), ref_sincospi)
+    err, i_max = sample_max_error_u64_2(x->PhiloxRNG.fast_sincospi(Float64, x), ref_sincospi)
     @test err < 4E-16
-    err, i_max = sample_max_error_u64_2(x->PhiloxRNG._fast_sincospi(Float32, x), ref_sincospi)
+    err, i_max = sample_max_error_u64_2(x->PhiloxRNG.fast_sincospi(Float32, x), ref_sincospi)
     @test err < 2E-7
 end
