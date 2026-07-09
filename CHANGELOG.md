@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+## [v1.1.2](https://github.com/medyan-dev/PhiloxRNG.jl/tree/v1.1.2) - 2026-07-09
+
+- Minor style changes based on suggestions from GPUArrays [#7](https://github.com/medyan-dev/PhiloxRNG.jl/pull/7)
+
 ## [v1.1.1](https://github.com/medyan-dev/PhiloxRNG.jl/tree/v1.1.1) - 2026-04-21
 
 - Float64 randn is now much faster on CUDA.jl [#4](https://github.com/medyan-dev/PhiloxRNG.jl/pull/4)
