@@ -1,7 +1,7 @@
 #!/usr/bin/env -S JULIA_LOAD_PATH=@ julia --project=@script --startup-file=no
 
 # CUDA benchmark for PhiloxRNG
-# Compares PhiloxRNG GPU kernels against CUDA.jl's built-in cuRAND
+# Compares PhiloxRNG GPU kernels against the GPUArrays Philox RNG (CUDA.default_rng())
 
 using Chairmarks
 using CUDA
@@ -140,7 +140,7 @@ function philox_randu01!(out::CuVector{Float32}; ctr1=UInt64(12345), key=rand(UI
 end
 
 function philox_randu01!(out::CuVector{Float64}; ctr1=UInt64(12345), key=rand(UInt64))
-    n_calls = cld(length(out), 4)
+    n_calls = cld(length(out), 2)
     threads = 256
     blocks = cld(n_calls, threads)
     @cuda threads=threads blocks=blocks kernel_randu01_f64!(out, ctr1, key)
@@ -162,13 +162,13 @@ function run_benchmarks(; size=100_000_000)
     results = Tuple{String,Float64}[]
 
     benchmarks = [
-        ("Random.rand!     F32", () -> bench_fill(Random.rand!, Float32, size), size),
+        ("GPUArrays rand!  F32", () -> bench_fill(x -> Random.rand!(CUDA.default_rng(), x), Float32, size), size),
         ("philox_randu01!  F32", () -> bench_fill(philox_randu01!, Float32, size), size),
-        ("Random.randn!    F32", () -> bench_fill(Random.randn!, Float32, size), size),
+        ("GPUArrays randn! F32", () -> bench_fill(x -> Random.randn!(CUDA.default_rng(), x), Float32, size), size),
         ("philox_randn!    F32", () -> bench_fill(philox_randn!, Float32, size), size),
-        ("Random.rand!     F64", () -> bench_fill(Random.rand!, Float64, size), size),
+        ("GPUArrays rand!  F64", () -> bench_fill(x -> Random.rand!(CUDA.default_rng(), x), Float64, size), size),
         ("philox_randu01!  F64", () -> bench_fill(philox_randu01!, Float64, size), size),
-        ("Random.randn!    F64", () -> bench_fill(Random.randn!, Float64, size), size),
+        ("GPUArrays randn! F64", () -> bench_fill(x -> Random.randn!(CUDA.default_rng(), x), Float64, size), size),
         ("philox_randn!    F64", () -> bench_fill(philox_randn!, Float64, size), size),
     ]
 
