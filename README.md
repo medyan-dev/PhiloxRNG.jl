@@ -85,21 +85,14 @@ All benchmarks use Julia 1.12.6, single thread on CPU.
 
 ### GPU — NVIDIA GeForce RTX 3080 (ns/value, N = 100,000,000)
 
-| Function | PhiloxRNG | CUDA.jl |
+| Function | PhiloxRNG | GPUArrays.jl |
 |---|---|---|
-| `rand` F32 | 0.0056 | 0.0056 |
-| `randn` F32 | 0.0058 | 0.0318 |
-| `rand` F64 | 0.0111 | 0.0195 |
-| `randn` F64 | 0.1332 | 0.2743 |
+| `rand` F32 | 0.0056 | 0.0057 |
+| `randn` F32 | 0.0056 | 0.0056 |
+| `rand` F64 | 0.0111 | 0.0111 |
+| `randn` F64 | 0.1285 | 0.1282 |
 
-### GPU — NVIDIA A100-SXM4-40GB (ns/value, N = 100,000,000)
-
-| Function | PhiloxRNG | CUDA.jl |
-|---|---|---|
-| `rand` F32 | 0.0028 | 0.0064 |
-| `randn` F32 | 0.0049 | 0.0359 |
-| `rand` F64 | 0.0053 | 0.0163 |
-| `randn` F64 | 0.0096 | 0.0762 |
+The GPUArrays.jl column uses `rand!(CUDA.default_rng(), x)` and `randn!(CUDA.default_rng(), x)` (Julia 1.13.1, CUDA.jl 6.4.2, GPUArrays.jl 11.5.16), whose Philox4x32-10 RNG is based on PhiloxRNG.jl.
 
 See `benchmarks/` for the full benchmark scripts.
 
