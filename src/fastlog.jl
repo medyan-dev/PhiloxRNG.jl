@@ -41,13 +41,13 @@ const LN2_LO_F32 = 9.058001f-6
     f = ifelse(k == Int32(0), f_comp, f_std)
 
     # Goal: get log(1+f) via a polynomial approx.
-    # Let s = f/(2+f), z = s², and log_poly(z) ≈ evalpoly(z, LOG_POLY_F32)
+    # Let s = f/(2+f), z = s², and log_poly(z) ≈ fma_evalpoly(z, LOG_POLY_F32)
     # log(1+f) = 2s + s³*log_poly(s²)
     # R = s²*log_poly(s²)
     # log(1+f) = f - f²/2 + s*(f²/2 + R)
     s = f / (2.0f0 + f)
     z = s * s
-    R = z * evalpoly(z, LOG_POLY_F32)
+    R = z * fma_evalpoly(z, LOG_POLY_F32)
     hfsq = 0.5f0 * f * f
 
     # log(x) = k*log(2) + log(1+f)
@@ -86,7 +86,7 @@ const LN2_LO_F64 = 1.90821492927058770002e-10
 
     s = f / (2.0 + f)
     z = s * s
-    R = z * evalpoly(z, LOG_POLY_F64)
+    R = z * fma_evalpoly(z, LOG_POLY_F64)
     hfsq = 0.5 * f * f
 
     # log(x) = k*ln2 + log(1+f)

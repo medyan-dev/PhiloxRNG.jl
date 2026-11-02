@@ -28,8 +28,8 @@ const CP_F32 = (1.0f0, -4.934788f0, 4.057578f0, -1.3061346f0)
     oct = (u % Int32) & Int32(7)
     y = fma(Float32(u & ~oftype(u, 7)), Float32(2)^Int32(-(sizeof(u)*8+2)), Float32(2)^Int32(-(sizeof(u)*8)))
 
-    sp = y * evalpoly(y * y, SP_F32)
-    cp = evalpoly(y * y, CP_F32)
+    sp = y * fma_evalpoly(y * y, SP_F32)
+    cp = fma_evalpoly(y * y, CP_F32)
 
     swap    = !iszero(oct & Int32(1))
     sin_neg = !iszero(oct & Int32(2))
@@ -60,8 +60,8 @@ const CP_F64 = (1.0, -4.934802200544605, 4.0587121263978485,
     oct = (u % Int32) & Int32(7)
     y = fma(Float64(u & ~oftype(u, 7)), Float64(2)^Int32(-(sizeof(u)*8+2)), Float64(2)^Int32(-(sizeof(u)*8)))
 
-    sp = y * evalpoly(y * y, SP_F64)
-    cp = evalpoly(y * y, CP_F64)
+    sp = y * fma_evalpoly(y * y, SP_F64)
+    cp = fma_evalpoly(y * y, CP_F64)
 
     swap    = !iszero(oct & Int32(1))
     sin_neg = !iszero(oct & Int32(2))

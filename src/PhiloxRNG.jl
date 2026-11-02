@@ -17,6 +17,7 @@ export randuneg11_f64
 export randn_f32
 export randn_f64
 
+include("evalpoly.jl")
 include("philox.jl")
 include("fastlog.jl")
 include("fastsincospi.jl")
