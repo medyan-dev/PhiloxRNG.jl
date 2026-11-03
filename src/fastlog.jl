@@ -47,8 +47,9 @@ const LN2_LO_F32 = 9.058001f-6
     # log(1+f) = f - f²/2 + s*(f²/2 + R)
     s = f / (2.0f0 + f)
     z = s * s
-    R = z * fma_evalpoly(z, LOG_POLY_F32)
     hfsq = 0.5f0 * f * f
+    # hfsq + R, with R = z*log_poly(z)
+    hfsq_R = fma(z, fma_evalpoly(z, LOG_POLY_F32), hfsq)
 
     # log(x) = k*log(2) + log(1+f)
     k_f32 = Float32(k)
@@ -56,7 +57,7 @@ const LN2_LO_F32 = 9.058001f-6
     # fma(k_f32, 0.6931472f0 #= log(2) =#, fma(s, R-f, f))
     # log(2) = LN2_HI_F32 + LN2_LO_F32
     fma(k_f32, LN2_HI_F32,
-        f - (hfsq - fma(s, (hfsq + R), k_f32 * LN2_LO_F32))
+        f - (hfsq - fma(s, hfsq_R, k_f32 * LN2_LO_F32))
     )
 end
 
@@ -86,12 +87,13 @@ const LN2_LO_F64 = 1.90821492927058770002e-10
 
     s = f / (2.0 + f)
     z = s * s
-    R = z * fma_evalpoly(z, LOG_POLY_F64)
     hfsq = 0.5 * f * f
+    # hfsq + R, with R = z*log_poly(z)
+    hfsq_R = fma(z, fma_evalpoly(z, LOG_POLY_F64), hfsq)
 
     # log(x) = k*ln2 + log(1+f)
     k_f64 = Float64(k)
     fma(k_f64, LN2_HI_F64,
-        f - (hfsq - fma(s, (hfsq + R), k_f64 * LN2_LO_F64))
+        f - (hfsq - fma(s, hfsq_R, k_f64 * LN2_LO_F64))
     )
 end
