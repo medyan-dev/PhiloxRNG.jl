@@ -124,3 +124,15 @@ end
         @test g[2] ≈ -r_hi * invsqrt2
     end
 end
+
+# Results must not depend on how the caller uses them.
+# With `muladd`, LLVM could fuse differently when only part of the tuple is used.
+@noinline full_randn_f32(k) = randn_f32(UInt64(k), UInt64(0), UInt64(0))
+@noinline first_randn_f32(k) = randn_f32(UInt64(k), UInt64(0), UInt64(0))[1]
+@noinline full_randn_f64(k) = randn_f64(UInt64(k), UInt64(0), UInt64(0))
+@noinline first_randn_f64(k) = randn_f64(UInt64(k), UInt64(0), UInt64(0))[1]
+@testset "randn consistent across call sites" begin
+    @test full_randn_f32(93)[1] === first_randn_f32(93)
+    @test all(k -> full_randn_f32(k)[1] === first_randn_f32(k), 0:100_000)
+    @test all(k -> full_randn_f64(k)[1] === first_randn_f64(k), 0:100_000)
+end

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+## [v1.1.3](https://github.com/medyan-dev/PhiloxRNG.jl/tree/v1.1.3) - 2026-11-02
+
+- Explicit `fma` is used instead of `muladd` or a separate multiply and add, so `randn_f32` and `randn_f64` results no longer depend on compiler fusion decisions. A small fraction of values change.
+
 ## [v1.1.2](https://github.com/medyan-dev/PhiloxRNG.jl/tree/v1.1.2) - 2026-07-09
 
 - Minor style changes based on suggestions from GPUArrays [#7](https://github.com/medyan-dev/PhiloxRNG.jl/pull/7)
